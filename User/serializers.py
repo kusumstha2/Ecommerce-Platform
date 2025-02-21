@@ -1,23 +1,18 @@
 from rest_framework import serializers
 from .models import User
 from django.contrib.auth.models import Group
-
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'username', 'gender', 'phone', 'store_name', 'store_description', 'store_logo']
+        fields = ['email', 'password', 'username', 'phone']  # Removed store_name, store_description, store_logo
 
     def create(self, validated_data):
         user = User(
             email=validated_data['email'],
             username=validated_data.get('username'),
-            gender=validated_data.get('gender'),
             phone=validated_data.get('phone'),
-            store_name=validated_data.get('store_name'),
-            store_description=validated_data.get('store_description'),
-            store_logo=validated_data.get('store_logo'),
             is_active=True  # Ensure user is active
         )
         user.set_password(validated_data['password'])
@@ -30,6 +25,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
 
 from rest_framework import serializers
 

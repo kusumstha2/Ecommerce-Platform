@@ -28,13 +28,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)  # Ensure email is unique
     password = models.CharField(max_length=300, validators=[MinLengthValidator(8)])
     username = models.CharField(max_length=300, null=True, blank=True)
-    gender = models.CharField(max_length=100, choices=[('male', 'Male'), ('female', 'Female'), ('others', 'Others')])
     phone = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{10}$')])
     role = models.ForeignKey(Group, related_name='user_groups', on_delete=models.CASCADE, default=3)
-    store_name = models.CharField(max_length=300, null=True, blank=True)
-    store_description = models.TextField(null=True, blank=True)
-    store_logo = models.ImageField(upload_to='store_logos/', null=True, blank=True)
-
+    is_active = models.BooleanField(default=True)
+  
     groups = models.ManyToManyField(
         Group,
         related_name="custom_user_groups",
@@ -53,3 +50,5 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
