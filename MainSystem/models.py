@@ -1,6 +1,7 @@
 from django.db import models
 from User.models import *
 from datetime import timedelta, datetime
+from django.conf import settings
 # Create your models here.
 class StoreCategory(models.Model):
     name = models.CharField(max_length=225)
@@ -92,6 +93,8 @@ class Store(models.Model):
     store_name = models.CharField(max_length=300, null=True, blank=True)
     store_description = models.TextField(null=True, blank=True)
     store_logo = models.ImageField(upload_to='store_logos/', null=True, blank=True)
+    ip=models.CharField(max_length=300, null=True, blank=True)
+    domain=models.CharField(max_length=300, null=True, blank=True)
 
     def __str__(self):
         return self.store_name if self.store_name else "Unnamed Store"
@@ -126,10 +129,14 @@ class Payment(models.Model):
         self.status = 'unpaid'
         self.save()
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class Notification(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=True)
 
     def __str__(self):
-        return f"Notification for {self.user_id.username}"
+        return f"Notification for {self.user_id.username} - {self.message[:50]}..."  
