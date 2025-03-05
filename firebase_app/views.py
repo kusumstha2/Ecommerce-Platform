@@ -1,3 +1,4 @@
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from . models import *
@@ -8,48 +9,6 @@ from rest_framework import generics
 from .models import *
 from .serializers import *
 import os
-
-# class CreateFileView(generics.CreateAPIView):
-#    serializer_class = FileSerializer
-
-#    def create(self, request, *args, **kwargs):
-#       serializer = self.get_serializer(data=request.data)
-#       serializer.is_valid(raise_exception=True)
-#       self.perform_create(serializer)
-#       headers = self.get_success_headers(serializer.data)
-#       return Response({"status_code": status.HTTP_201_CREATED, "message": "Blog post created successfully."}, status=status.HTTP_201_CREATED, headers=headers)
-
-# class CreateFcmTokenView(generics.CreateAPIView):
-#     serializer_class = NotificationTokenSerializer
-
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_create(serializer)
-#         headers = self.get_success_headers(serializer.data)
-#         return Response({"status_code": status.HTTP_201_CREATED, "message": "fcm token created"}, status=status.HTTP_201_CREATED, headers=headers)
-
-# class ViewTokenView(generics.RetrieveAPIView):
-#     serializer_class = NotificationTokenSerializer
-#     lookup_field = 'owner'
-
-#     def get_queryset(self):
-#         return NotificationToken.objects.all()
-
-# class UpdateFcmTokenView(generics.UpdateAPIView):
-#    serializer_class = NotificationTokenSerializer
-#    lookup_field = 'owner'
-
-#    def get_queryset(self):
-#       return NotificationToken.objects.all()
-
-#    def update(self, request, *args, **kwargs):
-#       instance = self.get_object()
-#       serializer = self.get_serializer(instance, data=request.data, partial=True)
-#       serializer.is_valid(raise_exception=True)
-#       self.perform_update(serializer)
-#       return Response({"status_code": status.HTTP_201_CREATED, "message": "Product updated successfully"})
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -97,14 +56,14 @@ def showFirebaseJS(request):
     importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");
     importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js");
     var firebaseConfig = {{
-        apiKey: {os.getenv('apiKey')},
-        authDomain: {os.getenv('authDomain')},
-        databaseURL: {os.getenv('databaseURL')},
-        projectId: {os.getenv('projectId')},
-        storageBucket: {os.getenv('storageBucket')},
-        messagingSenderId: {os.getenv('messagingSenderId')},
-        appId: {os.getenv('appId')},
-        measurementId: {os.getenv('measurementId')}
+        apiKey: "{os.getenv('apiKey')}",
+        authDomain: "{os.getenv('authDomain')}",
+        databaseURL: "{os.getenv('databaseURL')}",
+        projectId: "{os.getenv('projectId')}",
+        storageBucket: "{os.getenv('storageBucket')}",
+        messagingSenderId: "{os.getenv('messagingSenderId')}",
+        appId: "{os.getenv('appId')}",
+        measurementId: "{os.getenv('measurementId')}"
     }};
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();

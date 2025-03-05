@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Messaging Demo</title>
     <script type="module">
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-messaging.js";
-        
-     
 
         // Firebase configuration
         const firebaseConfig = {
@@ -27,7 +26,7 @@
         const messaging = getMessaging(app);
 
         // Register the Service Worker
-       
+     
 
         // Handle the button click to request permission for notifications
         document.getElementById('request-permission').addEventListener('click', () => {
@@ -74,4 +73,3 @@
     <p>Click the button to enable notifications.</p>
 </body>
 </html>
-
