@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+
+<head>
+    {% load socialaccount %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MindRiser</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Login to MindRiser</h2> 
+        <br><button onclick="window.location.href = '{% provider_login_url 'google' %}'" type="button" class="login-with-google-btn">
+            <b>Sign in with Google</b>
+        </button>
+    </div>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        position: relative;
+        margin-top: 50px;
+    }
+    .logout {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+    .login-container {
+        margin-top: 100px;
+    }
+    .google-login {
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+</style>

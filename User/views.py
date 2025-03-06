@@ -69,3 +69,15 @@ class LogoutView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+# Create your views here.
+def signup(request):
+    return render(request, 'signup.html')
+
+@login_required
+def home(request):
+    return render(request, 'home.html')

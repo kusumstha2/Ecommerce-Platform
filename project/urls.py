@@ -19,7 +19,8 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('User.urls')),
-    path('',include('MainSystem.urls')),
-    path('', include('firebase_app.urls')),
+    path('user/',include('User.urls')),
+    path('main/',include('MainSystem.urls')),
+    path('firebase/', include('firebase_app.urls')),
+    path('accounts/',include('allauth.urls'))
 ]
