@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import StoreCategory, Package, Theme, Store, Payment, Notification
+from datetime import timedelta
 
 class StoreCategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,10 +8,20 @@ class StoreCategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PackageSerializer(serializers.ModelSerializer):
-    expiry_date = serializers.DateTimeField(read_only=True)
     class Meta:
         model = Package
-        fields = '__all__'
+        fields = ['id', 'name', 'price', 'description', 'duration', 'package_type', 'features']
+        read_only_fields = ['price', 'duration']  # These fields are set automatically
+
+    def create(self, validated_data):
+        package_type = validated_data.get('package_type', Package.BASIC)
+        
+        # Fetch duration and price automatically based on package_type
+        duration_text, duration_timedelta = Package.PACKAGE_DURATIONS.get(package_type, ("1 Month", timedelta(days=30)))
+        validated_data['duration'] = duration_text
+        validated_data['price'] = Package.PACKAGE_PRICES.get(package_type, 29.99)  # Default price
+
+        return super().create(validated_data)
 
 class ThemeSerializer(serializers.ModelSerializer):
     class Meta:

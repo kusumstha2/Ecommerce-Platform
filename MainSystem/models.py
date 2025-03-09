@@ -3,12 +3,7 @@ from User.models import *
 from datetime import timedelta, datetime
 from django.conf import settings
 # Create your models here.
-class StoreCategory(models.Model):
-    name = models.CharField(max_length=225)
-
-    def __str__(self):
-        return self.name
-
+from django.utils import timezone
 
 from django.db import models
 
@@ -17,11 +12,13 @@ from datetime import timedelta
 from datetime import datetime, timedelta
 from django.db import models
 
-from datetime import datetime, timedelta
-from django.db import models
 
-from datetime import datetime, timedelta
-from django.db import models
+
+class StoreCategory(models.Model):
+    name = models.CharField(max_length=225)
+
+    def __str__(self):
+        return self.name
 
 class Package(models.Model):
     BASIC = 'basic'
@@ -45,7 +42,8 @@ class Package(models.Model):
         PREMIUM: 1500, 
         ENTERPRISE: 2000,  
     }
-
+    
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="packages", null=True, blank=True)
     name = models.CharField(max_length=225)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
@@ -59,7 +57,7 @@ class Package(models.Model):
         # Set duration text and expiry date based on package type
         duration_text, duration_timedelta = self.PACKAGE_DURATIONS.get(self.package_type, ("1 Month", timedelta(days=30)))
         self.duration = duration_text
-        self.expiry_date = datetime.now() + duration_timedelta  # Set expiry date based on the package type
+        self.expiry_date = timezone.now() + duration_timedelta  # Use timezone-aware datetime
 
         # Set price based on package type
         self.price = self.PACKAGE_PRICES.get(self.package_type, 29.99)  # Default price for Basic

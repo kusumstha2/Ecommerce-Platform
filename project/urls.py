@@ -22,5 +22,6 @@ urlpatterns = [
     path('user/',include('User.urls')),
     path('main/',include('MainSystem.urls')),
     path('firebase/', include('firebase_app.urls')),
-    path('accounts/',include('allauth.urls'))
+    path('accounts/',include('allauth.urls')),
+
 ]
