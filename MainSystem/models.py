@@ -5,12 +5,7 @@ from django.conf import settings
 # Create your models here.
 from django.utils import timezone
 
-from django.db import models
 
-from datetime import timedelta
-
-from datetime import datetime, timedelta
-from django.db import models
 
 
 
