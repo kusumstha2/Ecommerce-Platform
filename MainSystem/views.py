@@ -18,16 +18,21 @@ from User.models import User
 def get_or_set_cache(cache_key, queryset, serializer_class, timeout=60*15):
     """
     Fetch data from cache or set cache if not available.
+    If data is not found in cache, it is fetched from the database
+    and cached for subsequent requests.
     """
     data = cache.get(cache_key)
 
     if data is None:
         print(f"Fetching {cache_key} from Database...")
+        # Fetch data from the database if not in cache
         serialized_data = serializer_class(queryset, many=True).data
+        # Set cache
         cache.set(cache_key, json.dumps(serialized_data), timeout)
         return serialized_data
     else:
         print(f"Fetching {cache_key} from Cache...")
+        # Return data from cache if available
         return json.loads(data)
 
 def invalidate_cache(cache_key):
