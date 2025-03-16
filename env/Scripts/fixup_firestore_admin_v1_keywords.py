@@ -1,4 +1,4 @@
-#!C:\Users\ASUS\OneDrive - Kathmandu College of Technology\Desktop\Intern project\env\Scripts\python.exe
+#!C:\Users\prajw\OneDrive\Desktop\Python Programming\Project\Ecommerce-Platform\env\Scripts\python.exe
 # -*- coding: utf-8 -*-
 # Copyright 2024 Google LLC
 #

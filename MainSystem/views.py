@@ -11,6 +11,7 @@ from .serializers import (
     StoreSerializer, PaymentSerializer, NotificationSerializer
 )
 from User.models import User  
+from .tasks import send_package_email
 
 # Generic function to handle caching
 def get_or_set_cache(cache_key, queryset, serializer_class, timeout=60*15):
@@ -40,48 +41,70 @@ class StoreCategoryViewSet(viewsets.ModelViewSet):
         serializer.save()
         cache.delete("all_store_categories")  # Invalidate cache
 
+# class PackageViewSet(viewsets.ModelViewSet):
+#     queryset = Package.objects.all()
+#     serializer_class = PackageSerializer
+
+#     def list(self, request, *args, **kwargs):
+#         return Response(get_or_set_cache("all_packages", self.queryset, self.serializer_class))
+
+#     def retrieve(self, request, *args, **kwargs):
+#         cache_key = f"package_{kwargs.get('pk')}"
+#         return Response(get_or_set_cache(cache_key, Package.objects.filter(pk=kwargs.get('pk')), self.serializer_class))
+
+#     def perform_create(self, serializer):
+#         package = serializer.save()
+#         cache.delete("all_packages")  # Invalidate cache after new package creation
+
+#         # Email Notification
+#         user_id = self.request.data.get("user_id")
+#         user = get_object_or_404(User, id=user_id)
+
+#         subject = "Package Purchase Confirmation"
+#         message = f"""
+#         Dear {user.username},
+
+#         Thank you for purchasing the '{package.name}' package!
+
+#         Your package details:
+#         - Package Name: {package.name}
+#         - Price: ${package.price}
+#         - Duration: {package.duration}
+#         - Expiry Date: {package.expiry_date.strftime('%Y-%m-%d %H:%M:%S')}
+
+#         You can now access your package features.
+
+#         Best Regards,  
+#         Mindriser Tech
+#         """
+#         send_mail(
+#             subject,
+#             message,
+#             settings.DEFAULT_FROM_EMAIL,
+#             [user.email],
+#             fail_silently=False,
+#         )
+
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 class PackageViewSet(viewsets.ModelViewSet):
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
-
-    def list(self, request, *args, **kwargs):
-        return Response(get_or_set_cache("all_packages", self.queryset, self.serializer_class))
-
-    def retrieve(self, request, *args, **kwargs):
-        cache_key = f"package_{kwargs.get('pk')}"
-        return Response(get_or_set_cache(cache_key, Package.objects.filter(pk=kwargs.get('pk')), self.serializer_class))
 
     def perform_create(self, serializer):
         package = serializer.save()
         cache.delete("all_packages")  # Invalidate cache after new package creation
 
-        # Email Notification
+        # Get user ID
         user_id = self.request.data.get("user_id")
-        user = get_object_or_404(User, id=user_id)
 
-        subject = "Package Purchase Confirmation"
-        message = f"""
-        Dear {user.username},
-
-        Thank you for purchasing the '{package.name}' package!
-
-        Your package details:
-        - Package Name: {package.name}
-        - Price: ${package.price}
-        - Duration: {package.duration}
-        - Expiry Date: {package.expiry_date.strftime('%Y-%m-%d %H:%M:%S')}
-
-        You can now access your package features.
-
-        Best Regards,  
-        Mindriser Tech
-        """
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
+        # Send email asynchronously using Celery
+        send_package_email.delay(
+            user_id,
+            package.name,
+            package.price,
+            package.duration,
+            package.expiry_date.strftime('%Y-%m-%d %H:%M:%S')
         )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)

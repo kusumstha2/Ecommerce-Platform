@@ -109,7 +109,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'Ecommerce Main',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': '560616',
         'PORT': '5432',
         'HOST': 'localhost'
     }
@@ -207,7 +207,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kusumshrestha367@gmail.com' 
 EMAIL_HOST_PASSWORD = 'dfcyjywgwtexzsoo'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  
+# DEFAULT_FROM_EMAIL = f'Celery <{EMAIL_HOST_USER}>'
+# DEFAULT_FROM_EMAIL = f'Package Purchase Confirmation <{EMAIL_HOST_USER}>'
+DEFAULT_FROM_EMAIL = f'Your Company <{EMAIL_HOST_USER}>'
 
 
 USE_TZ = True
@@ -220,4 +222,19 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
+}
+
+# # Celery Configuration
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis broker URL
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Redis backend for results
+# CELERY_TIMEZONE = 'UTC'  # Set the timezone if needed
+# Redis as the broker for Celery
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_ROUTES = {
+    'project.MainSystem.tasks.send_test_email': {'queue': 'celery'},
 }
