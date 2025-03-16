@@ -14,6 +14,8 @@ from .serializers import (
     StoreSerializer, PaymentSerializer, NotificationSerializer
 )
 from User.models import User  
+from User.models import User  
+from .task import send_package_email
 
 def get_or_set_cache(cache_key, queryset, serializer_class, timeout=60*15):
     """
@@ -45,10 +47,7 @@ def invalidate_cache(cache_key):
 class StoreCategoryViewSet(viewsets.ModelViewSet):
     queryset = StoreCategory.objects.all()
     serializer_class = StoreCategorySerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['name']
-    search_fields = ['name']
-    ordering_fields = ['id']
+ 
 
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
@@ -83,11 +82,8 @@ class StoreCategoryViewSet(viewsets.ModelViewSet):
 class PackageViewSet(viewsets.ModelViewSet):
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'price', 'created_at']
-    search_fields = ['name', 'description']
-    ordering_fields = ['price', 'created_at']
-
+    
+ 
 
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
@@ -108,46 +104,28 @@ class PackageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         package = serializer.save()
-        invalidate_cache("all_packages")  # Invalidate cache after new package creation
+        cache.delete("all_packages")  # Invalidate cache after new package creation
 
-        # Email Notification
+        # Get user ID
         user_id = self.request.data.get("user_id")
-        user = get_object_or_404(User, id=user_id)
 
-        subject = "Package Purchase Confirmation"
-        message = f"""
-        Dear {user.username},
-
-        Thank you for purchasing the '{package.name}' package!
-
-        Your package details:
-        - Package Name: {package.name}
-        - Price: ${package.price}
-        - Duration: {package.duration}
-        - Expiry Date: {package.expiry_date.strftime('%Y-%m-%d %H:%M:%S')}
-
-        You can now access your package features.
-
-        Best Regards,  
-        Mindriser Tech
-        """
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
+        # Send email asynchronously using Celery
+        send_package_email.delay(
+            user_id,
+            package.name,
+            package.price,
+            package.duration,
+            package.expiry_date.strftime('%Y-%m-%d %H:%M:%S')
         )
+
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class ThemeViewSet(viewsets.ModelViewSet):
     queryset = Theme.objects.all()
     serializer_class = ThemeSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['name', 'package_id']
-    search_fields = ['name']
-    ordering_fields = ['id']
+
+    
 
 
 
@@ -175,11 +153,8 @@ class ThemeViewSet(viewsets.ModelViewSet):
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'created_at']
-    search_fields = ['store_name', 'store_description']
-    ordering_fields = ['created_at']
-
+    
+  
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
         cache_key = f"store_search_{query}" if query else "stores"
@@ -204,11 +179,8 @@ class StoreViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['store_id', 'amount', 'status', 'created_at']
-    search_fields = ['transaction_id']
-    ordering_fields = ['amount', 'created_at']
-
+   
+   
 
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
@@ -234,10 +206,8 @@ class PaymentViewSet(viewsets.ModelViewSet):
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user_id', 'is_read', 'created_at']
-    search_fields = ['message']
-    ordering_fields = ['created_at']
+ 
+    
 
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)

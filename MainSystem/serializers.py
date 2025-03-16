@@ -10,7 +10,7 @@ class StoreCategorySerializer(serializers.ModelSerializer):
 class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
-        fields = ['id', 'name', 'price', 'description', 'duration', 'package_type', 'features']
+        fields = '__all__'
         read_only_fields = ['price', 'duration']  # These fields are set automatically
 
     def create(self, validated_data):
