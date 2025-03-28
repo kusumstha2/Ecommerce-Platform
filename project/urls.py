@@ -24,6 +24,8 @@ urlpatterns = [
     path('main/',include('MainSystem.urls')),
     path('firebase/', include('firebase_app.urls')),
     path('accounts/',include('allauth.urls')),
+    path('pay/',include('Payment.urls')),
+    path('paypal/',include('paypal.standard.ipn.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 
     # Swagger UI

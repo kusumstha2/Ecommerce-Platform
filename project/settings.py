@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+# from datetime import timedelta
       
 import os
 import os
@@ -69,10 +69,15 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'django_filters',
     'drf_spectacular',
+    
+    'paypal.standard.ipn',
+    'Payment'
+    
   
 ]
 
 MIDDLEWARE = [
+    
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -168,19 +173,20 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         
     ),
     # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+#     "ROTATE_REFRESH_TOKENS": False,
+#     "BLACKLIST_AFTER_ROTATION": True,
+#     "ALGORITHM": "HS256",
+#     "SIGNING_KEY": SECRET_KEY,
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+# }
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # Default backend
     'allauth.account.auth_backends.AuthenticationBackend', 
@@ -214,6 +220,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kusumshrestha367@gmail.com' 
 EMAIL_HOST_PASSWORD = 'dfcyjywgwtexzsoo'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  
+
+PAYPAL_RECEIVER_EMAIL ="krijalsuwal67@gmail.com"
+PAYPAL_TEST = True
+
 
 
 USE_TZ = True

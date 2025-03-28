@@ -1,17 +1,17 @@
 from rest_framework import serializers
-from .models import User
+from .models import User  # Ensure this is your custom User model
 from django.contrib.auth.models import Group
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'username', 'phone']  # Removed store_name, store_description, store_logo
+        fields = ['email', 'password', 'phone']  # Removed 'username' since it's optional in the User model
 
     def create(self, validated_data):
         user = User(
             email=validated_data['email'],
-            username=validated_data.get('username'),
             phone=validated_data.get('phone'),
             is_active=True  # Ensure user is active
         )
@@ -28,14 +28,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
     
-from rest_framework import serializers
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()  # Expecting the refresh token as a string
-    
