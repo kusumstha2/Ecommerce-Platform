@@ -66,3 +66,4 @@
 
 ### For Notification 
 - FCM token is saved
+- firebase_key.json should be added in the project
