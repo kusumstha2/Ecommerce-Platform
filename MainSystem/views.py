@@ -9,6 +9,7 @@ from django.conf import settings
 from .models import StoreCategory, Package, Theme, Store, Payment, Notification
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
 from .serializers import (
     StoreCategorySerializer, PackageSerializer, ThemeSerializer, 
     StoreSerializer, PaymentSerializer, NotificationSerializer
@@ -47,7 +48,7 @@ def invalidate_cache(cache_key):
 class StoreCategoryViewSet(viewsets.ModelViewSet):
     queryset = StoreCategory.objects.all()
     serializer_class = StoreCategorySerializer
- 
+    permission_classes = [IsAuthenticated] 
 
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
@@ -82,7 +83,7 @@ class StoreCategoryViewSet(viewsets.ModelViewSet):
 class PackageViewSet(viewsets.ModelViewSet):
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
-    
+    permission_classes = [IsAuthenticated] 
  
 
     def list(self, request, *args, **kwargs):
@@ -124,7 +125,7 @@ class PackageViewSet(viewsets.ModelViewSet):
 class ThemeViewSet(viewsets.ModelViewSet):
     queryset = Theme.objects.all()
     serializer_class = ThemeSerializer
-
+    permission_classes = [IsAuthenticated] 
     
 
 
@@ -153,7 +154,7 @@ class ThemeViewSet(viewsets.ModelViewSet):
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer
-    
+    permission_classes = [IsAuthenticated] 
   
     def list(self, request, *args, **kwargs):
         query = request.GET.get("q", None)
@@ -206,7 +207,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
- 
+    permission_classes = [IsAuthenticated] 
     
 
     def list(self, request, *args, **kwargs):
